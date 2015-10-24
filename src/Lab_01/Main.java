@@ -21,11 +21,11 @@ public class Main {
     private void go() {
         GraphBuilder.Graph graph = new GraphBuilder.Graph();
         graph.build("C:\\Users\\moham\\Documents\\NetBeansProjects\\AI Labs\\src\\Lab_01\\input.txt");
-//        Bfs bfs = new Bfs(graph);
-//        bfs.start();
-//        System.out.println("");
-//        System.out.println("********************************");
-//        System.out.println("");
+        Bfs bfs = new Bfs(graph);
+        bfs.start();
+        System.out.println("");
+        System.out.println("********************************");
+        System.out.println("");
         Dfs dfs = new Dfs(graph);
         dfs.start();
         System.out.println("");
@@ -33,16 +33,16 @@ public class Main {
         System.out.println("");
         Dls dls = new Dls(graph);
         dls.start();
-//        System.out.println("");
-//        System.out.println("********************************");
-//        System.out.println("");
-//        Ids ids = new Ids(graph);
-//        ids.start();
-//        System.out.println("");
-//        System.out.println("********************************");
-//        System.out.println("");
-//        Bds bds = new Bds(graph);
-//        bds.start();
+        System.out.println("");
+        System.out.println("********************************");
+        System.out.println("");
+        Ids ids = new Ids(graph);
+        ids.start();
+        System.out.println("");
+        System.out.println("********************************");
+        System.out.println("");
+        Bds bds = new Bds(graph);
+        bds.start();
     }
    
 }
