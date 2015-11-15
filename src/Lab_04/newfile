@@ -1,0 +1,189 @@
+
+    public void start() {
+        PriorityQueue<Chromosome> population = InitialPopulation();
+        run(population);
+    }
+
+    private PriorityQueue<Chromosome> InitialPopulation() {
+        PriorityQueue<Chromosome> population = new PriorityQueue<>(CHROMO_COMPARATOR);
+        population.add(new Chromosome("1100", 36));
+        population.add(new Chromosome("0100", 44));
+        population.add(new Chromosome("0001", 14));
+        population.add(new Chromosome("1110", 14));
+        population.add(new Chromosome("0111", 56));
+        population.add(new Chromosome("1001", 54));
+        return population;
+    }
+
+    private static final Comparator<Chromosome> CHROMO_COMPARATOR = (Chromosome o1, Chromosome o2) -> {
+        if (o2.getFitness() > o1.getFitness()) {
+            return 1;
+        }
+        if (o2.getFitness() < o1.getFitness()) {
+            return -1;
+        }
+        return 0;
+    };
+
+    private void run(PriorityQueue<Chromosome> population) {
+        PriorityQueue<Chromosome> new_population = new PriorityQueue<>(CHROMO_COMPARATOR);
+        for (int i = 0; i < 100; i++) {
+//            if (population.peek().getFitness() == 56){
+//                break;
+//            }
+            int count = 0;
+            while (new_population.size() != N) {
+                //System.out.println(new_population.size());
+                //System.out.println("Iteration number" + ++count);
+                Chromosome chromosome1 = population.remove();
+                Chromosome chromosome2 = population.remove();
+                if (crossProbable()) {
+                    crossOver(chromosome1.getGenes(), chromosome2.getGenes(), new_population);
+                } else {
+                    new_population.add(chromosome1);
+                    new_population.add(chromosome2);
+                }
+                if (mutationProbable()) {
+                    mutate(new_population);
+                }
+            }
+            System.out.println(new_population.size());
+            for (Chromosome c : new_population) {
+                System.out.println(c.getGenes());
+            }
+            calculateFitness(new_population);
+            population.clear();
+            population.addAll(new_population);
+            new_population.clear();
+        }
+        printSolution(population);
+    }
+
+    private boolean crossProbable() {
+        Random random = new Random();
+        int cProbability = random.nextInt(10) + 1;
+        return cProbability >= 3;
+    }
+
+    private boolean mutationProbable() {
+        Random random = new Random();
+        int mProbability = random.nextInt(10) + 1;
+        return mProbability >= 8;
+    }
+
+    private void crossOver(String gene1, String gene2, PriorityQueue<Chromosome> new_population) {
+        Random r = new Random();
+        int point = r.nextInt(4);
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(gene1.substring(0, point));
+        sb1.append(gene2.substring(point, gene1.length()));
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(gene2.substring(0, point));
+        sb2.append(gene1.substring(point, gene2.length()));
+        Chromosome c1 = new Chromosome(sb1.toString(), 0);
+        Chromosome c2 = new Chromosome(sb2.toString(), 0);
+        new_population.add(c1);
+        new_population.add(c2);
+    }
+
+    private void mutate(PriorityQueue<Chromosome> new_population) {
+        ArrayList<Chromosome> list = new ArrayList<>(new_population);
+        Random r = new Random();
+        int rnd = r.nextInt(new_population.size());
+        Chromosome c = list.get(rnd);
+        new_population.remove(c);
+        int random = r.nextInt(4);
+        char[] cArray = c.getGenes().toCharArray();
+        if (c.getGenes().charAt(random) == '0') {
+            cArray[random] = '1';
+        } else {
+            cArray[random] = '0';
+        }
+        c.setGenes(Arrays.toString(cArray));
+        new_population.add(c);
+    }
+
+    private void calculateFitness(PriorityQueue<Chromosome> population) {
+        ArrayList<Chromosome> list = new ArrayList<>(population);
+        for (int i = 0; i < list.size(); ++i) {
+            //System.out.println(list.get(i).getGenes());
+            int a = Integer.parseInt(list.get(i).getGenes(), 2);
+            int b = (int) (15 * a - Math.pow(a, 2));
+            list.get(i).setFitness(b);
+        }
+        population.remove();
+        population.addAll(list);
+    }
+
+    private void printSolution(PriorityQueue<Chromosome> population) {
+        System.out.println(population.peek().getGenes());
+    }
+
+//
+//    private Chromosome selectChromosome(PriorityQueue<Chromosome> population) {
+//        int maxIndex = 0, max = 0;
+//        for (int i = 0; i < population.size(); i++) {
+//            int fitness = population.get(i).getFitness();
+//            if (fitness > max) {
+//                max = fitness;
+//                maxIndex = i;
+//            }
+//        }
+//        return population.remove();
+//    }
+//
+//    private void crossOver(String gene1, String gene2, ArrayList<Chromosome> new_population) {
+//        Random r = new Random();
+//        int point = r.nextInt(4);
+//        StringBuilder sb1 = new StringBuilder();
+//        sb1.append(gene1.substring(0, point));
+//        sb1.append(gene2.substring(point, gene1.length()));
+//        StringBuilder sb2 = new StringBuilder();
+//        sb2.append(gene2.substring(0, point));
+//        sb2.append(gene1.substring(point, gene2.length()));
+//        Chromosome c1 = new Chromosome(sb1.toString(), 0);
+//        Chromosome c2 = new Chromosome(sb2.toString(), 0);
+//        new_population.add(c1);
+//        new_population.add(c2);
+//    }
+//
+//    private boolean mutationProbable() {
+//        Random random = new Random();
+//        int mProbability = random.nextInt(10) + 1;
+//        return mProbability >= 8;
+//    }
+//
+//    private void mutate(ArrayList<Chromosome> new_population) {
+//        Random r = new Random();
+//        int rnd = r.nextInt(new_population.size());
+//        Chromosome c = new_population.get(rnd);
+//        int random = r.nextInt(4);
+//        char[] cArray = c.getGenes().toCharArray();
+//        if (c.getGenes().charAt(rnd) == '0') {
+//            cArray[rnd] = '1';
+//        } else {
+//            cArray[rnd] = '0';
+//        }
+//        c.setGenes(Arrays.toString(cArray));
+//    }
+//
+//    private void calculateFitness(PriorityQueue<Chromosome> population) {
+//        for (int i = 0; i < N; ++i) {
+//            int a = Integer.parseInt(population.get(i).getGenes(), 2);
+//            int b = (int) (15 * a - Math.pow(a, 2));
+//            population.get(i).setFitness(b);
+//        }
+//    }
+//
+//    private void printSolution(PriorityQueue<Chromosome> population) {
+//        double max = 0;
+//        int index = 0;
+//        for (int i = 0; i < N; ++i) {
+//            System.out.println(population.get(i).getGenes() + " :: " + population.get(i).getFitness());
+//            if (population.get(i).getFitness() > max) {
+//                max = population.get(i).getFitness();
+//                index = i;
+//            }
+//        }
+//        System.out.println(Integer.parseInt(population.get(index).getGenes(), 2));
+//    }

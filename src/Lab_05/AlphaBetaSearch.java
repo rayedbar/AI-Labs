@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Lab_01;
+package Lab_05;
 
 /**
  *
  * @author moham
  */
-public class UniformCostSearch {
+class AlphaBetaSearch {
+
+    AlphaBetaSearch(State root) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

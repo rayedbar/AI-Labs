@@ -15,10 +15,10 @@ class State {
     public int f;
 
     public State(){
-        state = new int [Main.DIMENSION][Main.DIMENSION];
+        this.state = new int [HillClimb.DIMENSION][HillClimb.DIMENSION];
     }
-    
-    void createState(int[][] state) {
+
+    public void createState(int[][] state) {
         for(int i = 0; i < 3; ++i)
             for(int j = 0; j < 3; ++j)
                 this.state[i][j] = state[i][j];
