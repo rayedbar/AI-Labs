@@ -5,8 +5,6 @@
  */
 package Lab_04;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author moham
@@ -15,118 +13,116 @@ public class GeneticAlgorithm {
 
     private static final int N = 6;
 
-    
-public void start() {
-        ArrayList<String> population = generatePopulation();
-        ArrayList<Integer> fitness = InitialFitness(population);
-        geneticAlgorithm(population, fitness);
+    public void run() {
+        String[] population = generate_population();
+        genetic_algorithm(population);
     }
 
-    private void geneticAlgorithm(ArrayList<String> population, ArrayList<Integer> fitness) {
-        for (int i = 0; i < 100; ++i) {
-            boolean flag = false;
-            for (int j = 0; j < N; ++j){
-                if (fitness.get(i) == 56){
-                    flag = true;
-                    break;
-                }
-            }
-            if (flag){
+    private void genetic_algorithm(String[] population) {
+        for (int i = 0; i < 1000; ++i) {
+            int[] fitness = calculate_fitness(population);
+            if (check_sat(fitness)) {
+                print_answer(population, fitness);
                 break;
             }
-            ArrayList<String> newPopulation = new ArrayList<>();
-            while (newPopulation.size() != population.size()) {
-                String x = randomSelect(population, fitness);
-                String y = randomSelect(population, fitness);
-                String [] offSprings = reproduce(x, y);
-                newPopulation.add(offSprings[0]);
-                newPopulation.add(offSprings[1]);
+            String[] new_population = new String[N];
+            int n = 0;
+            while (n < N) {
+                String child1 = random_select(population, fitness);
+                String child2 = random_select(population, fitness);
+                if (Math.random() <= 0.7) {
+                    String[] children = crossover(child1, child2);
+                    new_population[n + 0] = children[0];
+                    new_population[n + 1] = children[1];
+                } else {
+                    new_population[n + 0] = child1;
+                    new_population[n + 1] = child2;
+                }
+                if (Math.random() <= 0.6) {
+                    mutate(new_population, n);
+                }
+                n += 2;
+//                for (int k = 0; k < n; ++k){
+//                    System.out.println(new_population[k]);
+//                }
             }
-            population.clear();
-            population.addAll(newPopulation);
-            fitness = calculateFitness(population);
+            for (int j = 0; j < N; ++j) {
+                population[j] = new_population[j];
+            }
         }
-        printSolution(population, fitness);
     }
 
-    private String [] reproduce(String x, String y) {
-        String [] offSprings = new String [2];
+    private String[] crossover(String c1, String c2) {
+        int bPoint = (int) (Math.random() * 4);
+        String[] children = new String[2];
         StringBuilder sb = new StringBuilder();
-        StringBuilder sb1 = new StringBuilder();
-        int random = (int) (Math.random() * 4);
-        sb.append(x.substring(0, random));
-        sb.append(y.substring(random, 4));
-        offSprings[0] = sb.toString();
-        sb1.append(y.substring(0, random));
-        sb1.append(x.substring(random, 4));
-        offSprings[1] = sb1.toString();
-        System.out.print(x + " " + y + ": " + "(" + random + ")");
-        System.out.println(offSprings[0] + " :: " + offSprings[1]);
-        return offSprings;
+        sb.append(c1.substring(0, bPoint));
+        sb.append(c2.substring(bPoint, 4));
+        children[0] = sb.toString();
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(c2.substring(0, bPoint));
+        sb2.append(c1.substring(bPoint, 4));
+        children[1] = sb2.toString();
+        return children;
     }
-    
-    private ArrayList<Integer> calculateFitness(ArrayList<String> population) {
-        ArrayList<Integer> fitness = new ArrayList<>(N);
+
+    private String random_select(String[] population, int[] fitness) {
+        return population[(int)(Math.random() * N)];
+    }
+
+    private int[] calculate_fitness(String[] population) {
+        int[] fitness = new int[N];
         for (int i = 0; i < N; ++i) {
-            int a = Integer.parseInt(population.get(i), 2);
-            int b = (int) (15 * a - Math.pow(a, 2));
-            fitness.add(b);
-            System.out.println(fitness.get(i));
+            int x = Integer.parseInt(population[i], 2);
+            fitness[i] = (int) (15 * x - Math.pow(x, 2));
         }
         return fitness;
     }
 
-    private String randomSelect(ArrayList<String> population, ArrayList<Integer> fitness) {
-        String s = "";
-        int random = 0;
-        while(true){
-            random = (int) (Math.random() * N); 
-            if (fitness.get(random) > 0.5){
-                s = population.get(random);
-                break;
-            }
+    private void mutate(String[] new_population, int n) {
+        int r = (int) (Math.random() + 0.5);
+        String x = new_population[n + r];
+        int rnd = (int) (Math.random() * 4);
+        char[] child = x.toCharArray();
+        if (child[rnd] == '1') {
+            child[rnd] = '0';
+        } else {
+            child[rnd] = '1';
         }
-//        population.remove(random);
-//        fitness.remove(random);
-        return s; 
+        new_population[n + r] = String.copyValueOf(child);
     }
 
-    private ArrayList<String> generatePopulation() {
-        ArrayList<String> population = new ArrayList<>(N);
-        population.add("1100");
-        population.add("0100");
-        population.add("0001");
-        population.add("1110");
-        population.add("0111");
-        population.add("1001");
-        return population;
+    private boolean check_sat(int[] fitness) {
+        int count = 0;
+        for(int i = 0; i < N; ++i){
+            if (fitness[i] > 54)
+                count++;
+        }
+        return count > 2;
     }
 
-    private void printSolution(ArrayList<String> population, ArrayList<Integer> fitness) {
-        double max = 0; 
+    private String[] generate_population() {
+        String[] pop = new String[N];
+        pop[0] = "1100";
+        pop[1] = "0100";
+        pop[2] = "0001";
+        pop[3] = "1110";
+        pop[4] = "0111";
+        pop[5] = "1001";
+        return pop;
+    }
+
+    private void print_answer(String[] population, int[] fitness) {
+        System.out.println("Answer Found:");
+        int max = 0;
         int index = 0;
-        for (int i = 0; i < N; ++i) {
-            System.out.println(population.get(i) + " :: " + fitness.get(i));
-            if (fitness.get(i) > max) {
-                max = fitness.get(i);
+        for (int i = 0; i < N; ++i){
+            if (fitness[i] > max){
+                max = fitness[i];
                 index = i;
             }
         }
-        System.out.println(Integer.parseInt(population.get(index), 2));
+        System.out.println(population[index] + " - " + Integer.parseInt(population[index], 2));
     }
 
-    private ArrayList<Integer> InitialFitness(ArrayList<String> population) {
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 0; i < N; ++i){
-           list.add(36);
-           list.add(44);
-           list.add(14);
-           list.add(14);
-           list.add(56);
-           list.add(54);
-        }
-        return  list;
-    }
-    
 }
-

@@ -1,6 +1,5 @@
 package Lab_05;
 
-import com.sun.javafx.scene.traversal.Algorithm;
 
 /**
  * @author Md. Rayed Bin Wahed
@@ -31,8 +30,15 @@ public class Main {
         root.addChild(n2);
         root.addChild(n3);
 
+        System.out.println("Alpha Beta Search: ");
+        AlphaBetaSearch search = new AlphaBetaSearch(root);
+        
+        System.out.println("");
+        System.out.println("*************************");
+        System.out.println("");
+        
+        System.out.println("Alpha Beta Pruning: ");
         AlphaBetaPruning prunig = new AlphaBetaPruning(root);
-        //AlphaBetaSearch search = new AlphaBetaSearch(root);
     }
 
 }

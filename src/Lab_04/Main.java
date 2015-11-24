@@ -15,8 +15,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-        geneticAlgorithm.start();
+        GeneticAlgorithm n = new GeneticAlgorithm();
+        n.run();    
     }
     
 }

@@ -11,12 +11,9 @@ package Lab_05;
  */
 class AlphaBetaPruning {
 
-    private final State root;
     private int count;
     
     AlphaBetaPruning(State root) {
-        this.root = root;
-        this.count = 0;
         alpha_beta_pruning(root);
     }
 
@@ -31,17 +28,13 @@ class AlphaBetaPruning {
             return node.getData();
         int v = Integer.MIN_VALUE;
         for (int i = 0; i < node.getChildren().size(); ++i){
-            int min = min_value(node.getChildren().get(i), alpha, beta);
-            v = Math.max(v, min);
-            //v = Math.max(v, min_value(node.getChildren().get(i), alpha, beta)); 
-            //System.out.println("min = " + min);
+            v = Math.max(v, min_value(node.getChildren().get(i), alpha, beta)); 
             if (v >= beta){
                 count++;
                 System.out.println("Pruned Here: " + v);
                 return v;
             }
             alpha = Math.max(alpha, v);
-            System.out.println(alpha);
         }
         return v;
     }
@@ -51,19 +44,13 @@ class AlphaBetaPruning {
             return node.getData();
         int v = Integer.MAX_VALUE;
         for (int i = 0; i < node.getChildren().size(); ++i){
-            int max = max_value(node.getChildren().get(i), alpha, beta);
-            v = Math.min(v, max);
-            System.out.println("max = " + max);
-            //v = Math.min(v, max_value(node.getChildren().get(i), alpha, beta)); 
+            v = Math.min(v, max_value(node.getChildren().get(i), alpha, beta)); 
             if (v <= alpha){
-                System.out.println("alpha: " + alpha + "; beta:" + beta);
                 count++;
-                //System.out.println("Value of v: " + v + ". Alpha value: " + alpha + ". Pruned Here!");
+                System.out.println("Pruned Here: " + v);
                 return v;
-            }
-            System.out.println(beta);
+            } 
             beta = Math.min(beta, v);
-            
         }
         return v;
     }

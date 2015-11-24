@@ -28,7 +28,7 @@ public class State {
     
     
     public void addChild(State n) {
-        getChildren().add(n);
+        children.add(n);
     }
 
     /**
